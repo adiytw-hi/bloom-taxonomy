@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#7251d4">
+  <meta name="description" content="An interactive, classroom-ready exploration of the six levels of revised Bloom's Taxonomy, with 3D-style illustrations, examples, comparisons, and quizzes.">
+  <title>BloomLab | Explore • Think • Create</title>
+  <style>
+    :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:#17223b;background:#f7f8fd;font-synthesis:none;scroll-behavior:smooth}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:radial-gradient(circle at 95% 0%,#f4efff 0,transparent 28%),#f7f8fd}
+    button,select{font:inherit}button{cursor:pointer}button:disabled{cursor:default}
+    button:focus-visible,select:focus-visible,[role="button"]:focus-visible{outline:3px solid #a88bff;outline-offset:4px}
+    .shell{max-width:1460px;margin:auto;padding:0 42px 38px}
+    .topbar{height:76px;display:flex;align-items:center;gap:30px;border-bottom:1px solid #e9ebf4;background:rgba(255,255,255,.84);backdrop-filter:blur(14px);padding:0 max(42px,calc((100vw - 1376px)/2));position:sticky;top:0;z-index:30}
+    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;white-space:nowrap}
+    .brand-glyph{width:41px;height:41px;border-radius:13px;display:grid;place-items:center;color:white;font-size:23px;font-weight:900;transform:rotate(-8deg);background:linear-gradient(135deg,#a486f9,#6e47cf);box-shadow:0 8px 17px #6845bc40}
+    .brand-text{font-size:22px;font-weight:840;letter-spacing:-.8px}.brand-text span{color:#7150d6}
+    .nav{display:flex;align-items:stretch;gap:8px;margin-left:43px;height:100%}
+    .nav-btn{border:0;background:none;color:#768198;font-weight:720;font-size:13px;padding:0 15px;white-space:nowrap;border-bottom:3px solid transparent}
+    .nav-btn:hover{color:#6946c7}.nav-btn.active{color:#6944d2;border-bottom-color:#7656d7}
+    .top-note{margin-left:auto;display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:25px;background:#f0eaff;color:#704fc7;font-size:11px;font-weight:850;letter-spacing:.5px;white-space:nowrap}
+    .top-note:before{content:"";width:8px;height:8px;background:#8862df;border-radius:50%}
+    .hero{padding:32px 9px 22px}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:2.4px;font-weight:890;color:#7655d0}
+    .hero h1{margin:9px 0 9px;font-size:clamp(31px,3.2vw,47px);line-height:1.12;letter-spacing:-1.9px;font-weight:880}.hero h1 em{font-style:normal;color:#7353d5}
+    .hero p{color:#6e7b92;font-size:15px;line-height:1.6;margin:0;max-width:810px}
+    .split{display:grid;grid-template-columns:minmax(0,1.03fr) minmax(0,.97fr);gap:20px}
+    .panel{background:#fff;border:1px solid #e6eaf3;border-radius:23px;box-shadow:0 13px 42px rgba(32,37,84,.045);overflow:hidden}
+    .panel-title{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:14px;font-weight:800;color:#1e2941}
+    .subtle{font-size:12px;color:#8b97ab;font-weight:580}
+    .pyramid-panel{padding:24px 21px 20px;min-height:625px;display:flex;flex-direction:column}
+    .pyramid-holder{flex:1;display:grid;place-items:center;min-height:475px;position:relative}
+    .pyramid-svg{display:block;width:100%;max-height:520px;overflow:visible;filter:drop-shadow(13px 16px 11px rgba(64,51,125,.12))}
+    .pyr-group{cursor:pointer;transition:filter .18s ease,transform .18s ease;transform-box:fill-box;transform-origin:center}
+    .pyr-group:hover,.pyr-group:focus{filter:brightness(1.075) drop-shadow(0 0 7px rgba(76,57,142,.22));transform:translateY(-2px)}
+    .pyr-group.is-selected{filter:drop-shadow(0 1px 5px #36246a48)}
+    .pyr-label{font-size:19px;font-weight:850;letter-spacing:-.1px;pointer-events:none}.pyr-number{font-size:29px;font-weight:900;pointer-events:none}
+    .pyr-motif{pointer-events:none;opacity:.92}.pyramid-footer{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:9px;color:#8793a8;font-size:11px}
+    .pyramid-footer b{color:#7150cd}.hint-tag{background:#f3efff;color:#7555c6;border-radius:18px;padding:8px 12px;font-weight:780;white-space:nowrap}
+    .detail-panel{padding:23px 29px 27px;min-height:625px;--accent:#754acb;--light:#f6f1ff;--border:#ebe2fc}
+    .detail-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .level-chip{font-weight:850;color:var(--accent);background:var(--light);font-size:11px;border-radius:10px;padding:10px 13px;letter-spacing:.35px}
+    .visited-chip{display:flex;align-items:center;gap:6px;font-size:11px;color:#8993a7;border-radius:18px;border:1px solid #e9ecf3;padding:8px 11px}
+    .visited-chip b{color:#664bc5}
+    .art-stage{height:178px;margin:5px 0 4px;background:radial-gradient(ellipse at 50% 58%,var(--light),#fff 66%);border-radius:16px;display:grid;place-items:center;overflow:hidden;position:relative}
+    .art-stage:after{content:"";position:absolute;bottom:16px;width:47%;height:15px;background:#5d4b9140;filter:blur(16px);border-radius:50%}
+    .art-svg{height:174px;max-width:300px;width:90%;overflow:visible;position:relative;z-index:1}
+    .float-graphic{animation:floaty 3.4s ease-in-out infinite}
+    @keyframes floaty{0%,100%{transform:translateY(1px)}50%{transform:translateY(-7px)}}
+    .detail-panel h2{font-size:35px;letter-spacing:-1.3px;line-height:1.12;margin:5px 0 7px;color:var(--accent)}
+    .level-summary{color:#6b7890;line-height:1.53;font-size:14px;margin:0 0 13px}
+    .micro{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#9aa4b7;font-weight:900;margin:15px 0 8px}
+    .verb-list{display:flex;flex-wrap:wrap;gap:7px}
+    .verb-pill{background:var(--light);border:1px solid var(--border);color:var(--accent);font-weight:750;border-radius:9px;padding:6px 9px;font-size:11px}
+    .example-card{background:var(--light);border:1px solid var(--border);border-radius:12px;padding:11px 13px;margin:8px 0 0;color:#4d5870;font-size:12px;line-height:1.52}
+    .example-card strong{display:block;margin:0 0 3px;color:var(--accent);font-size:10px;letter-spacing:1.1px;text-transform:uppercase}
+    .detail-panel .subnote{font-size:12px;line-height:1.45;color:#708097;margin-top:10px;padding-left:11px;border-left:3px solid var(--accent)}
+    .action-row{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+    .primary-btn,.secondary-btn,.ghost-btn{border-radius:11px;border:1px solid transparent;padding:12px 15px;font-size:12px;font-weight:850;transition:transform .18s ease,background .18s ease;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+    .primary-btn{color:white;background:#704dd4;box-shadow:0 8px 17px #6e4bd32f}.primary-btn:hover{transform:translateY(-2px);background:#6040c2}
+    .primary-btn.level-action{background:var(--accent);box-shadow:none}.primary-btn.level-action:hover{filter:brightness(.92)}
+    .secondary-btn{background:#fff;color:#6f6386;border-color:#e7e4f0}.secondary-btn:hover{background:#f8f6ff}
+    .ghost-btn{padding:9px 12px;background:transparent;color:#7554c7;border-color:#ddd5f0}.ghost-btn:hover{background:#f5f1ff}
+    .practice-prompt{margin-top:14px;padding:13px 14px;border-radius:14px;border:1px dashed #d8d0eb;background:#fbfaff}
+    .practice-prompt strong{display:block;font-size:11px;color:#7050c9;letter-spacing:.3px}.practice-prompt p{font-size:12px;margin:6px 0 9px;color:#56627a;line-height:1.5}
+    .model-answer{font-size:12px;line-height:1.58;color:#375a53;background:#edfaf3;border:1px solid #d1ecdf;border-radius:9px;padding:10px;margin-top:9px}
+    .model-answer b{display:block;margin-bottom:4px;color:#247654}
+    .bottom-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:18px 9px 0;color:#8d9aad;font-size:11px}
+    .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:#36b887;margin-right:5px}
+    .bottom-bar strong{color:#5e4baf}
+    .quiz-shell{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:21px}
+    .quiz-panel{padding:27px 31px 28px;min-height:570px}.quiz-top{display:flex;justify-content:space-between;gap:15px;align-items:center}
+    .quiz-kicker{font-size:11px;color:#7150d0;letter-spacing:1px;font-weight:850}.quiz-number{font-size:12px;color:#8e9aad}
+    .progress-track{height:8px;background:#eeebf8;border-radius:10px;margin:18px 0 25px;overflow:hidden}.progress-fill{height:100%;background:linear-gradient(90deg,#9677e7,#704bd0);border-radius:10px;transition:width .3s ease}
+    .quiz-panel h2{font-size:24px;line-height:1.3;letter-spacing:-.7px;margin:0 0 17px}
+    .question-box{font-size:17px;line-height:1.65;color:#3d4560;border-radius:15px;background:#f8f7fc;border:1px solid #ebe7f6;padding:20px 22px;font-weight:700}
+    .quiz-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:21px 0}
+    .answer-option{padding:12px 14px;border:2px solid #e7ebf3;background:white;border-radius:13px;display:flex;align-items:center;gap:12px;color:#3d4861;font-weight:760;font-size:14px;text-align:left;min-height:62px}
+    .answer-option:hover:not(:disabled){background:#f8f6ff;border-color:#c0afea}.answer-option.correct{background:#effaf3;border-color:#51b981}.answer-option.wrong{background:#fff1f1;border-color:#e68d93}.answer-option.dimmed{opacity:.52}
+    .answer-option .answer-circle{color:#fff;display:grid;place-items:center;height:34px;width:34px;border-radius:10px;flex-shrink:0;font-size:15px;font-weight:890;box-shadow:inset 0 -4px #00000017}
+    .answer-option .result-symbol{margin-left:auto;font-weight:900;font-size:17px}
+    .feedback{border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;line-height:1.55;font-size:13px;margin-top:12px}
+    .feedback.positive{background:#eefbf4;border:1px solid #ccead8;color:#376a50}.feedback.negative{background:#fff8ed;border:1px solid #f2dcc0;color:#795b37}
+    .feedback-icon{font-size:20px}.feedback b{font-size:13px}.feedback p{margin:4px 0 0}
+    .quiz-bottom{display:flex;justify-content:space-between;align-items:center;gap:13px;margin-top:20px}.quiz-bottom small{font-size:11px;color:#8c98ad}.quiz-bottom .primary-btn:disabled{background:#b5abc8;box-shadow:none}
+    .quiz-side{padding:28px 23px}.prize{background:radial-gradient(circle,#eee6ff 0,#faf7ff 58%,#fff 75%);height:158px;display:grid;place-items:center;border-radius:16px}
+    .prize svg{width:123px;height:123px;filter:drop-shadow(7px 9px 8px #5c439131);animation:floaty 4s ease-in-out infinite}
+    .quiz-side h3{font-size:20px;margin:14px 0 6px}.quiz-side p{font-size:13px;line-height:1.6;color:#7c879c;margin:0 0 15px}
+    .score-stat{background:#f4f0fe;border:1px solid #e7dff9;border-radius:14px;padding:16px 17px;display:flex;align-items:baseline;gap:9px}
+    .score-stat b{font-size:28px;color:#6746bf}.score-stat span{font-size:11px;color:#9280b7}
+    .learning-list{font-size:12px;color:#728096;line-height:2.0}.learning-list b{color:#37aa81;margin-right:5px}
+    .completion{text-align:center;max-width:580px;margin:0 auto;padding:10px 0 20px}.completion h2{font-size:33px;margin:10px 0}.completion .big-score{font-size:80px;font-weight:900;letter-spacing:-5px;color:#7150d1;line-height:1.1}.completion .big-score span{font-size:31px;color:#a69aba;letter-spacing:0}
+    .completion p{color:#6c7790;line-height:1.65}.review-list{text-align:left;margin:24px 0 0}.review-item{background:#fff;border:1px solid #e6e8f1;border-radius:12px;padding:13px;margin:8px 0;font-size:12px;line-height:1.6}.review-item b{display:block;color:#4b5470}.review-item span{color:#63806e}
+    .compare-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:19px}.compare-controls label{font-size:12px;color:#6d7890;font-weight:800}
+    .level-select{border:1px solid #dedfed;border-radius:10px;padding:12px 14px;color:#3d4861;background:#fff;min-width:170px;font-weight:730}
+    .versus{font-size:12px;color:#9786b7;font-weight:900}
+    .compare-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:19px}
+    .compare-card{border:1px solid #e8eaf3;background:white;border-radius:22px;padding:25px 26px;--accent:#744bd1;--light:#f6f2ff;--border:#ebe3ff}
+    .compare-card .art-stage{height:164px}.compare-card .art-svg{height:158px}
+    .compare-card h2{font-size:29px;color:var(--accent);margin:10px 0 8px;letter-spacing:-.8px}.compare-card p{color:#69778f;line-height:1.55;font-size:13px;margin:0 0 12px}
+    .compare-example{background:var(--light);border:1px solid var(--border);border-radius:12px;padding:13px 15px;font-size:13px;line-height:1.55;color:#4d5770;min-height:85px}
+    .compare-insight{background:#f2eeff;border:1px solid #e4ddfa;border-radius:17px;padding:18px 22px;margin:20px 0 0;font-size:13px;line-height:1.6;color:#4e4c70}
+    .compare-insight strong{color:#6b48c2}.ladder{margin-top:21px;padding:22px 25px}.ladder h3{margin:0 0 5px;font-size:18px}.ladder p{margin:0 0 15px;color:#8490a4;font-size:12px}.ladder-row{display:grid;grid-template-columns:130px 1fr;align-items:center;gap:16px;padding:10px 4px;border-top:1px solid #f0f1f5;font-size:12px;line-height:1.5;color:#54617b}
+    .ladder-level{display:flex;align-items:center;gap:9px;font-weight:820;color:#28334b}.ladder-circle{width:26px;height:26px;border-radius:8px;color:white;display:grid;place-items:center;font-size:12px}
+    .ladder-row button{border:0;background:none;padding:0;text-align:left;color:inherit;text-decoration:none;cursor:pointer}.ladder-row button:hover{text-decoration:underline}
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:50;background:#282145;color:white;padding:12px 18px;border-radius:12px;font-size:12px;box-shadow:0 14px 30px #1a1b4055}
+    @media(max-width:1130px){.topbar{padding:0 26px}.shell{padding:0 26px 32px}.nav{margin-left:10px}.pyramid-panel{min-height:625px}.detail-panel{padding:21px 22px 26px}.detail-panel h2{font-size:32px}}
+    @media(max-width:840px){.split,.quiz-shell{grid-template-columns:1fr}.pyramid-panel{min-height:475px}.pyramid-holder{min-height:365px}.pyramid-svg{max-height:370px}.detail-panel{min-height:0}.art-stage{height:185px}.quiz-side{display:grid;grid-template-columns:180px 1fr;gap:15px;align-items:center}.quiz-side .prize{grid-row:span 3}.quiz-side .score-stat{max-width:230px}.compare-grid{grid-template-columns:1fr}.hero h1{font-size:35px}.nav{gap:0}}
+    @media(max-width:590px){.topbar{height:auto;min-height:70px;flex-wrap:wrap;gap:0;padding:11px 16px 0}.brand-glyph{width:33px;height:33px;font-size:18px}.brand-text{font-size:19px}.top-note{padding:8px 10px;font-size:9px}.nav{margin:9px -16px 0;order:3;width:calc(100% + 32px);height:42px;justify-content:space-around}.nav-btn{padding:0 11px;font-size:12px}.shell{padding:0 14px 25px}.hero{padding:24px 8px 17px}.hero h1{font-size:31px;letter-spacing:-1.2px}.hero p{font-size:13px}.pyramid-panel{padding:18px 12px 15px;min-height:355px}.pyramid-holder{min-height:270px}.pyramid-svg{max-height:290px}.pyr-label{font-size:18px}.pyr-number{font-size:25px}.panel-title{font-size:13px}.subtle{font-size:10px}.pyramid-footer{font-size:9px}.hint-tag{padding:7px}.detail-panel{padding:21px 19px 24px}.detail-panel h2{font-size:32px}.bottom-bar{font-size:10px;line-height:1.5;margin:15px 5px}.quiz-panel{padding:20px 16px}.question-box{font-size:15px;padding:16px}.quiz-options{gap:8px}.answer-option{min-height:59px;padding:8px;gap:8px;font-size:12px}.answer-option .answer-circle{width:29px;height:29px}.quiz-side{display:block;padding:18px}.quiz-side .prize{height:105px}.quiz-side .prize svg{width:90px;height:90px}.compare-controls{gap:8px}.level-select{min-width:0;flex:1}.compare-card{padding:19px 17px}.ladder{padding:17px}.ladder-row{grid-template-columns:100px 1fr;gap:7px}.ladder-level{font-size:11px;gap:6px}.ladder-circle{width:23px;height:23px}.quiz-bottom{align-items:flex-start;flex-direction:column}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.001ms!important;scroll-behavior:auto!important;transition-duration:.001ms!important}}
+    @media print{.topbar,.action-row,.practice-prompt,.bottom-bar,.pyramid-footer,.compare-controls,.quiz-bottom{display:none!important}.shell{padding:0}.panel{box-shadow:none}.split{grid-template-columns:1fr 1fr}body{background:#fff}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#explore" id="brand-link" aria-label="BloomLab, go to pyramid"><span class="brand-glyph" aria-hidden="true">⬡</span><span class="brand-text">Bloom<span>Lab</span></span></a>
+    <nav class="nav" aria-label="Main navigation">
+      <button class="nav-btn active" data-view="explore" aria-current="page">Explore levels</button>
+      <button class="nav-btn" data-view="practice">Practice challenges</button>
+      <button class="nav-btn" data-view="compare">Compare levels</button>
+    </nav>
+    <div class="top-note">STUDENT MODE</div>
+  </header>
+  <main class="shell" id="app" tabindex="-1"></main>
+  <script>
+  'use strict';
+  const LEVELS = [
+    {id:1,name:'Remember',color:'#69309d',dark:'#44216f',ink:'#6c369d',light:'#f5effa',border:'#e9def2',tag:'Recall information',skill:'Retrieving what you have already learned',
+      description:'Recall facts, terms, concepts, and information from memory. You do not need to explain or change the information yet.',
+      verbs:['Define','List','Identify','Name','Recognize','Recall','State'],
+      business:'List the five phases of the project management lifecycle.',
+      everyday:'Name the ingredients needed to make your favorite dish.',
+      tip:'You are retrieving information, not explaining why it works.',
+      prompt:'Without looking at your notes, list three examples of digital marketing channels.',
+      model:'For example: email marketing, social media marketing, and search engine marketing. Any three accurate channels demonstrate recall.',
+      shared:'List the basic components needed to launch an online store.'},
+    {id:2,name:'Understand',color:'#3979c4',dark:'#24548e',ink:'#2e70ba',light:'#edf5ff',border:'#dceaf9',tag:'Explain meaning',skill:'Making sense of information',
+      description:'Interpret information and explain an idea in your own words. Demonstrate that you grasp its meaning, not just its wording.',
+      verbs:['Explain','Summarize','Paraphrase','Classify','Discuss','Interpret','Illustrate'],
+      business:'Explain why a company uses customer relationship management (CRM) software.',
+      everyday:'Explain to a friend why a phone battery drains faster when several apps run.',
+      tip:'You can explain the concept, but are not necessarily using it to solve a new problem.',
+      prompt:'In two sentences, explain what an online shopping cart does.',
+      model:'An online shopping cart keeps track of the items a customer wants to purchase. It lets the customer review quantities and prices before checkout.',
+      shared:'Explain in your own words how checkout and inventory work together in an online store.'},
+    {id:3,name:'Apply',color:'#40b942',dark:'#227a35',ink:'#218e37',light:'#effbf0',border:'#dbf0de',tag:'Use your knowledge',skill:'Using a known method in a situation',
+      description:'Use a learned rule, formula, procedure, or technique to complete a task or solve a practical problem.',
+      verbs:['Use','Calculate','Implement','Execute','Demonstrate','Solve','Operate'],
+      business:'Use a spreadsheet formula to calculate the return on investment of a campaign.',
+      everyday:'Follow a recipe to prepare a meal for six people instead of four.',
+      tip:'You are putting an existing method into action rather than merely describing it.',
+      prompt:'A product costs 40 JOD and is sold for 55 JOD. Calculate the gross profit per unit (before other expenses).',
+      model:'55 JOD − 40 JOD = 15 JOD gross profit per unit. A correct response applies the subtraction procedure.',
+      shared:'Use a provided formula to calculate the total price of a customer’s online order.'},
+    {id:4,name:'Analyze',color:'#efe415',dark:'#bcb008',ink:'#867a00',light:'#fffdea',border:'#f2edb6',tag:'Find patterns and relationships',skill:'Breaking ideas into meaningful parts',
+      description:'Break complex information into parts, compare those parts, and uncover patterns, relationships, causes, or assumptions.',
+      verbs:['Compare','Differentiate','Organize','Examine','Categorize','Investigate','Distinguish'],
+      business:'Compare sales figures across three regions and identify why performance differs.',
+      everyday:'Inspect your monthly spending to find which categories are increasing and why.',
+      tip:'You are investigating how things relate, not yet judging which option is best.',
+      prompt:'A store sold more products on weekends than weekdays. Identify two categories of data you would compare to investigate why.',
+      model:'For example: customer traffic by day and promotion activity by day. Comparing these variables could reveal relationships behind the pattern.',
+      shared:'Break down online-store sales by product category to identify purchasing patterns.'},
+    {id:5,name:'Evaluate',color:'#f68e19',dark:'#b9670d',ink:'#c66e05',light:'#fff5e8',border:'#fae3c4',tag:'Make evidence-based judgments',skill:'Choosing or defending using criteria',
+      description:'Make a reasoned judgment using evidence and clear criteria. Defend why an option, argument, or solution is stronger than another.',
+      verbs:['Judge','Critique','Defend','Recommend','Justify','Appraise','Prioritize'],
+      business:'Choose the best cloud provider using cost, security, and reliability criteria, and justify the choice.',
+      everyday:'Select the best laptop for university based on battery life, budget, and performance.',
+      tip:'You must make a judgment and justify it; comparing information alone is Analyze.',
+      prompt:'Vendor A is cheaper, while Vendor B offers stronger support. Name two criteria you would use to recommend one.',
+      model:'For example: total lifetime cost and technical support quality. A strong evaluation weighs both against the organization’s priorities before making a recommendation.',
+      shared:'Recommend the best delivery partner for the online store using cost, speed, and reliability criteria.'},
+    {id:6,name:'Create',color:'#ed273c',dark:'#a81d33',ink:'#d81d36',light:'#fff0f2',border:'#f9d9de',tag:'Produce something original',skill:'Combining ideas into a new whole',
+      description:'Combine ideas and knowledge to develop a new product, plan, model, solution, design, or original work.',
+      verbs:['Design','Develop','Construct','Invent','Compose','Formulate','Produce'],
+      business:'Design a new digital marketing campaign for a product entering a new market.',
+      everyday:'Invent a time-saving household system using the materials you already own.',
+      tip:'You are making something new; the result should be coherent and fit the stated purpose.',
+      prompt:'Suggest a new feature for a university learning platform and describe what it would do.',
+      model:'For example: a weekly study-plan generator that reads deadlines, lets students set available study hours, and builds a personalized schedule. This is a proposed new solution.',
+      shared:'Design a new online-store launch campaign with original features and a clear plan.'}
+  ];
+
+  const QUESTIONS = [
+    {level:1,q:'“List the four main functions of management.”',why:'List asks students to retrieve previously learned facts.'},
+    {level:1,q:'“Identify three examples of cloud storage services.”',why:'Identify checks whether students recognize or recall known examples.'},
+    {level:1,q:'“State the definition of return on investment (ROI).”',why:'State asks for a known definition, without applying or interpreting it.'},
+    {level:2,q:'“Explain in your own words how a search engine finds relevant pages.”',why:'Explaining a concept in your own words demonstrates understanding.'},
+    {level:2,q:'“Summarize the main argument of an article on digital transformation.”',why:'Summarizing meaning is an Understand activity.'},
+    {level:2,q:'“Paraphrase a description of two-factor authentication for a new student.”',why:'Paraphrasing shows that the learner understands what the idea means.'},
+    {level:3,q:'“Use the given interest-rate formula to calculate the amount owed on a loan.”',why:'Applying a learned formula to specific numbers is Apply.'},
+    {level:3,q:'“Follow the taught steps to configure multifactor authentication on an account.”',why:'Executing a known procedure is Apply.'},
+    {level:3,q:'“Use an existing project schedule template to plan the next two weeks.”',why:'The student uses a learned method or template in a practical situation.'},
+    {level:4,q:'“Compare two customer surveys, group similar responses, and identify patterns.”',why:'Comparing parts and identifying patterns are central to Analyze.'},
+    {level:4,q:'“Examine an increase in website traffic to distinguish organic and paid sources.”',why:'Separating data into meaningful parts and examining relationships is Analyze.'},
+    {level:4,q:'“Investigate which factors account for a drop in student attendance.”',why:'Investigating causes and relationships requires analysis.'},
+    {level:5,q:'“Select the best supplier using price, quality, and delivery evidence; defend the decision.”',why:'Selecting and defending an option against criteria is Evaluate.'},
+    {level:5,q:'“Critique a proposed data privacy policy using a defined checklist.”',why:'Judging a policy against explicit criteria is Evaluate.'},
+    {level:5,q:'“Recommend the strongest of three business strategies and justify your recommendation.”',why:'A supported judgment is the defining feature of Evaluate.'},
+    {level:6,q:'“Design an original mobile app to help students organize their study time.”',why:'Developing a new solution is Create.'},
+    {level:6,q:'“Construct a new service concept combining two existing business ideas.”',why:'Combining elements into a new coherent product is Create.'},
+    {level:6,q:'“Develop an original marketing campaign for a sustainable product.”',why:'Creating a novel and purposeful campaign is Create.'}
+  ];
+  const $app=document.getElementById('app');
+  function savedExplored(){try{return JSON.parse(localStorage.getItem('bloomlab-explored')||'[]').filter(i=>i>=1&&i<=6)}catch{return []}}
+  const state={view:'explore',selected:1,explored:new Set(savedExplored()),showModel:false,compareA:2,compareB:4,quiz:null};
+  const lv=n=>LEVELS[n-1];
+  const cssVars=L=>`--accent:${L.ink};--light:${L.light};--border:${L.border};`;
+  const escapeText=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function persist(){try{localStorage.setItem('bloomlab-explored',JSON.stringify([...state.explored]))}catch{}}
+  function getBest(){try{return Number(localStorage.getItem('bloomlab-best')||0)}catch{return 0}}
+  function saveBest(v){try{if(v>getBest())localStorage.setItem('bloomlab-best',String(v))}catch{}}
+  function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+  // The illustrations are self-contained vector art, with shaded faces and subtle motion.
+  const SVG_START='<defs><linearGradient id="purple" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b8a5fa"/><stop offset="1" stop-color="#6541bd"/></linearGradient><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffe2a0"/><stop offset=".56" stop-color="#f4ac36"/><stop offset="1" stop-color="#ca7618"/></linearGradient><linearGradient id="steel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e0f0ff"/><stop offset="1" stop-color="#488dce"/></linearGradient><radialGradient id="lamp"><stop stop-color="#fff9c5"/><stop offset=".45" stop-color="#ffdf6e"/><stop offset="1" stop-color="#f5a93f"/></radialGradient><linearGradient id="mint" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a1efd2"/><stop offset="1" stop-color="#20a878"/></linearGradient><filter id="shade" x="-35%" y="-35%" width="170%" height="180%"><feDropShadow dx="3" dy="8" stdDeviation="5" flood-color="#44336d" flood-opacity=".22"/></filter></defs>';
+  function cube(x,y,s,top='#9a80ef',left='#7351d2',right='#4c2b9d'){
+    const t=s*.28,h=s*.85;
+    return `<g filter="url(#shade)"><path d="M${x} ${y} l${s} ${-t} l${s} ${t} l${-s} ${t}Z" fill="${top}"/><path d="M${x} ${y} l${s} ${t} v${h} l${-s} ${-t}Z" fill="${left}"/><path d="M${x+s} ${y+t} l${s} ${-t} v${h} l${-s} ${t}Z" fill="${right}"/></g>`;
+  }
+  function gearPath(cx,cy,rOut,rIn,teeth=12){let d='';const count=teeth*4;for(let i=0;i<count;i++){let a=(i/count)*Math.PI*2-Math.PI/2,r=(i%4===1||i%4===2)?rOut:rIn;d+=(i?'L':'M')+(cx+r*Math.cos(a)).toFixed(1)+' '+(cy+r*Math.sin(a)).toFixed(1)}return d+'Z'}
+  function artMarkup(n){let shape='';
+    if(n===1){shape=`<ellipse cx="160" cy="157" rx="90" ry="18" fill="#d5c6f6" opacity=".55"/><g class="float-graphic" filter="url(#shade)"><path d="M69 78 Q116 55 161 89 Q206 55 255 78 L255 154 Q208 127 161 163 Q112 127 69 154Z" fill="#6d4cb9"/><path d="M78 76 Q115 57 159 90 L159 151 Q116 126 78 145Z" fill="#f8f4ff" stroke="#9778d1" stroke-width="4"/><path d="M161 90 Q208 58 245 76 L245 145 Q204 124 161 151Z" fill="#f0e8ff" stroke="#9778d1" stroke-width="4"/><path d="M161 90 L161 151" stroke="#ad98db" stroke-width="4"/><g stroke="#c8b8e5" stroke-width="3" stroke-linecap="round"><path d="M93 92 L139 104 M91 106 L139 118 M90 120 L134 132 M180 103 L230 91 M181 117 L232 105 M181 131 L226 119"/></g><path d="M68 148 Q118 123 159 155 Q208 123 256 148 L257 160 Q209 136 160 171 Q112 136 68 160Z" fill="#805bd0"/></g><path d="M249 38 L253 49 L264 53 L253 57 L249 69 L245 57 L233 53 L245 49Z" fill="#ffce70"/><circle cx="64" cy="57" r="5" fill="#bda2fa"/>`}
+    else if(n===2){shape=`<ellipse cx="162" cy="170" rx="96" ry="17" fill="#c5def6" opacity=".55"/><g class="float-graphic">${cube(67,104,42,'#c5e8ff','#66ace5','#3b7fca')}${cube(132,65,47,'#a8d9fe','#5195d7','#246fb0')}${cube(190,119,35,'#d5eafd','#88b7e2','#4f8fca')}<path d="M130 90 Q139 50 175 50 M201 107 Q233 85 236 70 M130 160 Q170 183 198 154" fill="none" stroke="#407fca" stroke-width="4" stroke-dasharray="5 8" stroke-linecap="round"/><circle cx="175" cy="50" r="6" fill="#f5b742"/><circle cx="236" cy="70" r="5" fill="#73c5ed"/><circle cx="198" cy="154" r="5" fill="#f5b742"/></g>`}
+    else if(n===3){shape=`<ellipse cx="163" cy="171" rx="93" ry="18" fill="#c8eac9" opacity=".55"/><g class="float-graphic" filter="url(#shade)"><path d="M70 151 L160 117 L255 145 L161 183Z" fill="#4cc271"/><path d="M70 151 L161 183 L161 193 L70 161Z" fill="#2b8c4b"/><path d="M161 183 L255 145 L255 157 L161 193Z" fill="#176d3b"/><path d="${gearPath(164,94,68,55,11)}" fill="url(#mint)" stroke="#1e8b59" stroke-width="7" stroke-linejoin="round"/><circle cx="164" cy="94" r="29" fill="#f5fff7" stroke="#2b9652" stroke-width="8"/><circle cx="164" cy="94" r="12" fill="#2e9b61"/><path d="M101 97 L111 71 M217 126 L232 112" stroke="#baffd4" stroke-width="6" stroke-linecap="round"/></g>`}
+    else if(n===4){shape=`<ellipse cx="160" cy="172" rx="95" ry="15" fill="#e9e5ad" opacity=".55"/><g class="float-graphic" filter="url(#shade)"><path d="M65 150 L168 117 L257 150 L154 185Z" fill="#fbf6af" stroke="#d7c951" stroke-width="3"/>${cube(89,111,24,'#faeb7b','#e4cf45','#bca934')}${cube(139,92,26,'#f8ed95','#d8ca2e','#a99d20')}${cube(194,104,21,'#fff3a1','#d9d04b','#aaa222')}<circle cx="175" cy="79" r="47" fill="#ffffff50" stroke="#dfbd30" stroke-width="14"/><circle cx="175" cy="79" r="39" fill="#fffbd570" stroke="#fff9da" stroke-width="3"/><path d="M208 115 L251 159" stroke="#b18a17" stroke-width="18" stroke-linecap="round"/><path d="M208 115 L251 159" stroke="#f5d85c" stroke-width="10" stroke-linecap="round"/></g>`}
+    else if(n===5){shape=`<ellipse cx="162" cy="171" rx="95" ry="17" fill="#f5dbac" opacity=".55"/><g class="float-graphic" filter="url(#shade)"><path d="M103 153 L218 153 L236 170 L87 170Z" fill="url(#gold)"/><path d="M151 64 L169 64 L173 153 L147 153Z" fill="url(#gold)"/><path d="M73 70 L250 70 L250 82 L73 82Z" fill="url(#gold)" transform="rotate(-4 160 75)"/><circle cx="161" cy="71" r="17" fill="url(#gold)" stroke="#d18a1d" stroke-width="3"/><path d="M98 81 L91 130 M126 80 L132 130 M196 80 L188 124 M225 78 L234 124" stroke="#c88d29" stroke-width="3"/><path d="M70 129 Q112 159 150 129Z" fill="#eda93b"/><path d="M166 123 Q210 152 253 123Z" fill="#e69a2b"/><path d="M72 129 Q112 144 148 129 M169 123 Q212 137 250 123" fill="none" stroke="#ffe2a1" stroke-width="5"/></g><path d="M91 107 L95 115 L104 118 L95 121 L91 130 L87 121 L78 118 L87 115Z" fill="#ffd67b"/>`}
+    else {shape=`<ellipse cx="161" cy="174" rx="98" ry="16" fill="#f2b5bc" opacity=".54"/><g class="float-graphic" filter="url(#shade)">${cube(61,128,30,'#ffb9be','#ed6176','#b92b45')}${cube(213,133,24,'#ffd0b0','#f78e5c','#e05a37')}<path d="M126 106 Q91 79 111 45 Q123 18 161 19 Q203 19 215 56 Q226 83 193 112 L184 132 L142 132Z" fill="url(#lamp)" stroke="#ec9a45" stroke-width="4"/><path d="M145 88 Q159 103 175 87 L165 121 L154 121Z" fill="#fff9b4" opacity=".8"/><path d="M142 132 L185 132 L184 146 L144 146Z" fill="#e88953"/><path d="M145 146 L184 146 L180 158 L149 158Z" fill="#bc4457"/><path d="M156 158 L172 158 L169 169 L159 169Z" fill="#7e4263"/><path d="M147 45 Q128 49 128 71" fill="none" stroke="#fffdea" stroke-width="8" stroke-linecap="round" opacity=".88"/><path d="M161 8 L161 -3 M222 26 L232 16 M101 26 L89 16 M235 74 L249 76 M87 74 L73 77" stroke="#f7a844" stroke-width="5" stroke-linecap="round"/></g>`}
+    return `<svg class="art-svg" viewBox="0 0 325 205" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">${SVG_START}${shape}</svg>`;
+  }
+
+  function pyramid(){const cx=355;let parts=[];
+    for(let index=0;index<6;index++){
+      const n=6-index,L=lv(n),y=18+index*91,h=80,top=66+index*47,bottom=108+index*47;
+      const face=`${cx-top},${y} ${cx+top},${y} ${cx+bottom},${y+h} ${cx-bottom},${y+h}`;
+      const side=`${cx+top},${y} ${cx+top+14},${y-9} ${cx+bottom+14},${y+h-9} ${cx+bottom},${y+h}`;
+      const lower=`${cx-bottom},${y+h} ${cx+bottom},${y+h} ${cx+bottom+14},${y+h-9} ${cx-bottom+14},${y+h-9}`;
+      const ink=n===4?'#302b35':'#fff'; const selected=state.selected===n;
+      parts.push(`<g class="pyr-group ${selected?'is-selected':''}" role="button" tabindex="0" aria-label="Level ${n}, ${L.name}${selected?', selected':''}" aria-pressed="${selected}" data-level="${n}"><title>Level ${n}: ${L.name}. Click to explore examples.</title><polygon points="${lower}" fill="${L.dark}" opacity=".62"/><polygon points="${side}" fill="${L.dark}"/><polygon points="${face}" fill="${L.color}" stroke="${selected?'#fff':'#fff'}" stroke-width="${selected?7:5}" stroke-linejoin="round"/><text x="${cx-bottom*.57}" y="${y+51}" text-anchor="middle" class="pyr-number" fill="${ink}">${n}</text><text x="${cx+13}" y="${y+51}" text-anchor="middle" class="pyr-label" fill="${ink}">${L.name}</text><circle class="pyr-motif" cx="${cx+bottom-38}" cy="${y+39}" r="19" fill="#fff" fill-opacity=".12"/><text x="${cx+bottom-38}" y="${y+47}" text-anchor="middle" font-size="23" fill="${ink}" class="pyr-motif">${['','▣','⬡','⚙','⌕','⚖','✦'][n]}</text></g>`);
+    }
+    return `<svg class="pyramid-svg" viewBox="0 0 725 590" role="group" aria-label="Six clickable levels of revised Bloom's Taxonomy, from Remember at the bottom to Create at the top" xmlns="http://www.w3.org/2000/svg">${parts.join('')}</svg>`;
+  }
+  function verbHtml(L){return `<div class="verb-list">${L.verbs.map(v=>`<span class="verb-pill">${v}</span>`).join('')}</div>`}
+  function exploreView(){const L=lv(state.selected);return `
+    <section class="hero"><div class="eyebrow">Learn how learning works</div><h1>Six levels. <em>Infinite ways to think.</em></h1><p>Explore revised Bloom’s Taxonomy, from recalling facts to building original ideas. Select a level, examine the examples, and try it yourself.</p></section>
+    <section class="split" aria-label="Bloom's Taxonomy explorer"><article class="panel pyramid-panel"><div class="panel-title"><span>The learning pyramid</span><span class="subtle">Click or tap a level</span></div><div class="pyramid-holder">${pyramid()}</div><div class="pyramid-footer"><span>Revised <b>Bloom's Taxonomy</b> · 6 cognitive levels</span><span class="hint-tag">↑ Increasing cognitive complexity</span></div></article>
+    <article class="panel detail-panel" id="selected-level" style="${cssVars(L)}" aria-live="polite"><div class="detail-head"><span class="level-chip">LEVEL ${String(L.id).padStart(2,'0')} OF 06 · ${L.tag.toUpperCase()}</span><span class="visited-chip">✓ <b>${state.explored.size}/6</b> explored</span></div>
+      <div class="art-stage">${artMarkup(L.id)}</div><h2>${L.name}</h2><p class="level-summary">${L.description}</p><div class="micro">Action verbs</div>${verbHtml(L)}
+      <div class="micro">Real examples</div><div class="example-card"><strong>In a business / technology course</strong>“${L.business}”</div><div class="example-card"><strong>In everyday life</strong>“${L.everyday}”</div>
+      <div class="subnote"><b>What makes it ${L.name}?</b> ${L.tip}</div>
+      <div class="practice-prompt"><strong>TRY IT YOURSELF · LEVEL ${L.id}</strong><p>${L.prompt}</p><button class="ghost-btn" data-action="show-model" aria-expanded="${state.showModel}">${state.showModel?'Hide model answer':'Show a model answer'} <span aria-hidden="true">${state.showModel?'↑':'↓'}</span></button>${state.showModel?`<div class="model-answer"><b>Possible answer</b>${L.model}</div>`:''}</div>
+      <div class="action-row"><button class="primary-btn level-action" data-action="practice-level">Practice ${L.name} <span aria-hidden="true">→</span></button><button class="secondary-btn" data-action="next-level">Explore next level <span aria-hidden="true">→</span></button><button class="secondary-btn" data-action="compare-this">Compare this level <span aria-hidden="true">↗</span></button></div>
+    </article></section><div class="bottom-bar"><span><span class="status-dot"></span>Works offline in your browser · No sign-in required</span><span><strong>${state.explored.size} of 6</strong> levels visited · Explore, practice, and compare</span></div>`}
+
+  function trophy(){return `<svg viewBox="0 0 150 150" aria-hidden="true"><defs><linearGradient id="cup" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffe39a"/><stop offset="1" stop-color="#e5a229"/></linearGradient></defs><path d="M51 34 H99 V81 Q99 106 75 110 Q51 106 51 81Z" fill="url(#cup)" stroke="#d59730" stroke-width="3"/><path d="M49 45 H25 Q18 80 58 89 M101 45 H124 Q130 80 92 89" fill="none" stroke="#dca02b" stroke-width="10" stroke-linecap="round"/><path d="M74 111 V127 M48 128 H102 V138 H48Z" fill="#d9a34a" stroke="#bd832b" stroke-width="4"/><path d="M75 48 L82 65 L101 67 L86 80 L90 99 L75 89 L59 99 L64 80 L50 67 L69 65Z" fill="#fff4ce"/></svg>`}
+  function initQuiz(filter='all'){
+    let questions;if(filter==='all'){questions=shuffle(LEVELS.flatMap(L=>shuffle(QUESTIONS.filter(q=>q.level===L.id)).slice(0,2)));}
+    else questions=shuffle(QUESTIONS.filter(q=>q.level===Number(filter)));
+    state.quiz={filter,questions,index:0,choice:null,correct:0,results:[],done:false};state.view='practice';render();window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function quizView(){if(!state.quiz)initQuiz('all');const Q=state.quiz;if(Q.done)return resultsView();const question=Q.questions[Q.index],answered=Q.choice!==null;
+    const options=LEVELS.map(L=>{
+      let status='';if(answered){if(L.id===question.level)status=' correct';else if(Q.choice===L.id)status=' wrong';else status=' dimmed'}
+      return `<button class="answer-option${status}" data-answer="${L.id}" ${answered?'disabled':''} aria-label="Answer: ${L.name}" ${answered&&L.id===question.level?'aria-description="Correct answer"':''}><span class="answer-circle" style="background:${L.color}">${L.id}</span>${L.name}${answered&&L.id===question.level?'<span class="result-symbol" style="color:#37aa72">✓</span>':answered&&Q.choice===L.id?'<span class="result-symbol" style="color:#d26770">✕</span>':''}</button>`;
+    }).join('');
+    const progress=(Q.index+(answered?1:0))/Q.questions.length*100;
+    const title=Q.filter==='all'?'Can you identify the thinking level?':`Practice: ${lv(Number(Q.filter)).name}`;
+    return `<section class="hero"><div class="eyebrow">Practice lab · ${Q.filter==='all'?'Mixed challenges':'Focused practice'}</div><h1>${title}</h1><p>Read the learning task, choose the best matching Bloom’s level, and get an immediate explanation.</p></section>
+    <div class="quiz-shell"><article class="panel quiz-panel"><div class="quiz-top"><span class="quiz-kicker">CHALLENGE · RECOGNIZE THE LEVEL</span><span class="quiz-number">Question ${Q.index+1} of ${Q.questions.length}</span></div><div class="progress-track" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(progress)}"><div class="progress-fill" style="width:${progress}%"></div></div><h2>Which level best describes this task?</h2><div class="question-box">${escapeText(question.q)}</div><div class="quiz-options">${options}</div>
+    ${answered?`<div class="feedback ${Q.choice===question.level?'positive':'negative'}" role="status"><span class="feedback-icon">${Q.choice===question.level?'✓':'ⓘ'}</span><div><b>${Q.choice===question.level?'Correct!':'Good try!'} The answer is ${lv(question.level).name}.</b><p>${escapeText(question.why)}</p></div></div>`:''}
+    <div class="quiz-bottom"><small>${answered?'Read the explanation, then move to the next question.':'Tip: focus on what the learner must actually do, not just one verb.'}</small><button class="primary-btn" data-action="next-question" ${answered?'':'disabled'}>${Q.index===Q.questions.length-1?'See my results':'Next challenge'} <span aria-hidden="true">→</span></button></div>
+    </article><aside class="panel quiz-side"><div class="prize">${trophy()}</div><h3>Build your thinking skills</h3><p>Each question connects a learning objective to its cognitive demand.</p><div class="score-stat"><b>${Q.correct} / ${Q.index+(answered?1:0)}</b><span>correct so far</span></div><div class="micro">What you are practicing</div><div class="learning-list"><b>✓</b> Recognizing cognitive actions<br><b>✓</b> Distinguishing nearby levels<br><b>✓</b> Explaining your reasoning</div><div class="action-row"><button class="secondary-btn" data-view="explore">← Back to the pyramid</button><button class="ghost-btn" data-action="restart-quiz">Restart</button></div>${getBest()?`<p style="font-size:11px;margin-top:17px">Your best mixed-quiz score: <b>${getBest()}/12</b></p>`:''}</aside></div>`
+  }
+  function resultsView(){const Q=state.quiz;const percentage=Math.round(100*Q.correct/Q.questions.length),misses=Q.results.filter(r=>!r.correct);
+    return `<section class="hero"><div class="eyebrow">Practice lab · Your results</div><h1>Your thinking, <em>in action.</em></h1><p>See how well you matched cognitive tasks to Bloom’s levels.</p></section><article class="panel quiz-panel completion"><div class="prize" style="max-width:190px;height:120px;margin:auto">${trophy()}</div><h2>${percentage===100?'Excellent work!':percentage>=75?'Great progress!':percentage>=50?'You are getting there!':'Keep exploring and practicing!'}</h2><div class="big-score">${Q.correct}<span> / ${Q.questions.length}</span></div><p><b>${percentage}% correct.</b> ${misses.length?`Review the ${misses.length} question${misses.length===1?'':'s'} below and revisit any level you want to strengthen.`:'You matched every task to its correct thinking level.'}</p>${misses.length?`<div class="review-list"><div class="micro">Review your mistakes</div>${misses.map(r=>`<div class="review-item"><b>${escapeText(r.q)}</b>Your choice: ${lv(r.chosen).name} · <span>Correct: ${lv(r.level).name}.</span><div>${escapeText(r.why)}</div></div>`).join('')}</div>`:''}<div class="action-row" style="justify-content:center;margin-top:22px"><button class="primary-btn" data-action="restart-quiz">Try again →</button><button class="secondary-btn" data-view="explore">Explore the pyramid</button><button class="secondary-btn" data-view="compare">Compare levels</button></div></article>`}
+  function compareCard(L){return `<article class="compare-card" style="${cssVars(L)}"><span class="level-chip">LEVEL ${String(L.id).padStart(2,'0')} / 06</span><div class="art-stage">${artMarkup(L.id)}</div><h2>${L.name}</h2><p>${L.description}</p><div class="micro">What the student does</div><p><b>${L.skill}</b></p><div class="micro">Common verbs</div>${verbHtml(L)}<div class="micro">Same topic: opening an online store</div><div class="compare-example">“${L.shared}”</div><div class="action-row"><button class="primary-btn level-action" data-go-level="${L.id}">Explore ${L.name} →</button></div></article>`}
+  function compareInsight(A,B){if(A.id===B.id)return `Both columns show ${A.name}. Choose two different levels to compare their cognitive demands.`;
+    const lower=A.id<B.id?A:B,upper=A.id>B.id?A:B;
+    const specific={
+      '1-2':'Remember asks students to retrieve knowledge; Understand asks them to make sense of and explain that knowledge.',
+      '2-3':'Understand explains how or why a process works; Apply uses that process to complete a task.',
+      '3-4':'Apply uses a known procedure; Analyze investigates parts, relationships, or causes.',
+      '4-5':'Analyze finds patterns or explains relationships; Evaluate uses evidence and criteria to make and defend a judgment.',
+      '5-6':'Evaluate selects or defends an option; Create produces a new, coherent solution or work.'
+    };
+    return specific[`${lower.id}-${upper.id}`]||`${lower.name} primarily involves ${lower.skill.toLowerCase()}, while ${upper.name} requires ${upper.skill.toLowerCase()}. The important difference is the cognitive task, not only the verb in the question.`;
+  }
+  function compareView(){const A=lv(state.compareA),B=lv(state.compareB);const options=LEVELS.map(L=>`<option value="${L.id}">${L.id} · ${L.name}</option>`).join('');
+    return `<section class="hero"><div class="eyebrow">Compare thinking skills</div><h1>Spot the <em>difference.</em></h1><p>Two learning activities may sound similar but demand very different thinking. Select two levels and compare their purpose, verbs, and examples.</p></section>
+    <div class="compare-controls"><label for="compare-a">First level</label><select id="compare-a" class="level-select" aria-label="First level">${options}</select><span class="versus">VERSUS</span><label for="compare-b">Second level</label><select id="compare-b" class="level-select" aria-label="Second level">${options}</select><button class="ghost-btn" data-action="swap-levels">⇄ Swap</button></div>
+    <section class="compare-grid" aria-label="Side-by-side cognitive levels">${compareCard(A)}${compareCard(B)}</section><div class="compare-insight"><strong>The key distinction:</strong> ${compareInsight(A,B)}</div>
+    <section class="panel ladder"><h3>One topic, six different learning objectives</h3><p>Click any example to explore how the same online-store scenario changes at each level.</p>${LEVELS.map(L=>`<div class="ladder-row"><span class="ladder-level"><span class="ladder-circle" style="background:${L.color}">${L.id}</span>${L.name}</span><button data-go-level="${L.id}">${L.shared} <span aria-hidden="true">↗</span></button></div>`).join('')}</section>`
+  }
+
+  function render(){
+    document.querySelectorAll('.nav-btn').forEach(b=>{const is=b.dataset.view===state.view;b.classList.toggle('active',is);if(is)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
+    if(state.view==='explore')$app.innerHTML=exploreView();
+    if(state.view==='practice')$app.innerHTML=quizView();
+    if(state.view==='compare'){$app.innerHTML=compareView();document.getElementById('compare-a').value=String(state.compareA);document.getElementById('compare-b').value=String(state.compareB)}
+    document.title=`BloomLab | ${state.view==='explore'?'Explore Bloom’s Taxonomy':state.view==='practice'?'Practice Challenges':'Compare Levels'}`;
+  }
+  function chooseLevel(n,mobileScroll=true){if(!lv(n))return;state.selected=n;state.explored.add(n);persist();state.showModel=false;state.view='explore';render();if(mobileScroll&&matchMedia('(max-width:840px)').matches){requestAnimationFrame(()=>document.getElementById('selected-level')?.scrollIntoView({behavior:'smooth',block:'start'}))}}
+  function switchView(view){if(view==='practice'){initQuiz('all');return}if(!['explore','compare'].includes(view))return;state.view=view;render();window.scrollTo({top:0,behavior:'smooth'})}
+  document.addEventListener('click',e=>{
+    const link=e.target.closest('#brand-link');if(link){e.preventDefault();switchView('explore');return}
+    const el=e.target.closest('[data-view],[data-level],[data-go-level],[data-action],[data-answer]');if(!el)return;
+    if(el.dataset.view){switchView(el.dataset.view);return}
+    if(el.dataset.level){chooseLevel(Number(el.dataset.level));return}
+    if(el.dataset.goLevel){chooseLevel(Number(el.dataset.goLevel),false);window.scrollTo({top:0,behavior:'smooth'});return}
+    if(el.dataset.answer){const Q=state.quiz;if(!Q||Q.done||Q.choice!==null)return;const chosen=Number(el.dataset.answer),question=Q.questions[Q.index];Q.choice=chosen;const correct=chosen===question.level;if(correct)Q.correct++;Q.results.push({q:question.q,level:question.level,chosen,why:question.why,correct});render();return}
+    switch(el.dataset.action){
+      case 'show-model':state.showModel=!state.showModel;render();break;
+      case 'next-level':chooseLevel(state.selected===6?1:state.selected+1);break;
+      case 'practice-level':initQuiz(state.selected);break;
+      case 'compare-this':state.compareA=state.selected;state.compareB=state.selected===6?5:state.selected+1;switchView('compare');break;
+      case 'swap-levels':[state.compareA,state.compareB]=[state.compareB,state.compareA];render();break;
+      case 'next-question':{const Q=state.quiz;if(!Q||Q.choice===null)return;if(Q.index>=Q.questions.length-1){Q.done=true;if(Q.filter==='all')saveBest(Q.correct)}else{Q.index++;Q.choice=null}render();window.scrollTo({top:0,behavior:'smooth'});break}
+      case 'restart-quiz':initQuiz(state.quiz?.filter||'all');break;
+    }
+  });
+  document.addEventListener('keydown',e=>{const el=e.target.closest?.('[data-level][role="button"]');if(el&&(e.key==='Enter'||e.key===' ')){e.preventDefault();chooseLevel(Number(el.dataset.level))}});
+  document.addEventListener('change',e=>{if(e.target.id==='compare-a'){state.compareA=Number(e.target.value);render()}if(e.target.id==='compare-b'){state.compareB=Number(e.target.value);render()}});
+  // Remember that the learner has visited the default level, and restore previously explored levels.
+  state.explored.add(state.selected);persist();
+  if(location.hash==='#compare')state.view='compare';
+  else if(location.hash==='#practice'){state.view='practice';state.quiz={filter:'all',questions:shuffle(LEVELS.flatMap(L=>shuffle(QUESTIONS.filter(q=>q.level===L.id)).slice(0,2))),index:0,choice:null,correct:0,results:[],done:false}}
+  render();
+  </script>
+</body>
+</html>
